@@ -1,18 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
-public class ActorManager : MonoBehaviour
+public class ActorManager : MonoBehaviour, IActorManager
 {
-    // Start is called before the first frame update
-    void Start()
+    private IInputManager _inputManager;
+    private IViewManager _viewManager;
+    private Actor[] _actors;
+    [Inject] public void Construct(IInputManager inputManger, IViewManager viewManager)
     {
-        
+        _inputManager = inputManger;
+        _viewManager = viewManager;
+
+        _inputManager.OnLPMClick += RaycastActors;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        _actors = FindObjectsByType<Actor>(FindObjectsSortMode.InstanceID);
+    }
+
+    public void RaycastActors()
+    {
+        Ray ray = _viewManager.GetCurrentCamera().ScreenPointToRay(_inputManager.ScreenPosition);
+        RaycastHit hit;
+
+        if(Physics.Raycast(ray, out hit))
+        {
+            ActorCollider actorCollider = hit.collider.GetComponent<ActorCollider>();
+            if (actorCollider != null)
+            {
+                actorCollider.Parent.EnterSelectState();
+            }
+
+            else DeselectAllActors();
+        }
+
+        else DeselectAllActors();
+    }
+
+    public void DeselectAllActors()
+    {
+        foreach(var actor in _actors)
+        {
+            actor.EnterDefaultState();  
+        }
     }
 }

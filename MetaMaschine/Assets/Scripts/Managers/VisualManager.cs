@@ -1,18 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-public class VisualManager : MonoBehaviour
+[Serializable]
+public class ModelBinding
 {
-    // Start is called before the first frame update
-    void Start()
+    public string ID;
+    public GameObject Model;
+}
+
+public class VisualManager : MonoBehaviour, IVisualManager
+{
+    [SerializeField] private List<ModelBinding> defaultModelBindings;
+    [SerializeField] private List<ModelBinding> symbolicModelBindings;
+    [SerializeField] private Material defaultActorMaterial;
+    [SerializeField] private Material hoverActorMaterial;
+    [SerializeField] private Material selectActorMaterial;
+
+    public Material GetDefaultMaterial()
     {
-        
+        return defaultActorMaterial;
     }
 
-    // Update is called once per frame
-    void Update()
+    public GameObject GetDefaultModel(string modelID)
     {
-        
+        foreach (ModelBinding binding in defaultModelBindings) 
+        {
+            if (binding.ID == modelID) return binding.Model;
+        }
+
+        return null;
+    }
+
+    public Material GetHoverMaterial()
+    {
+        return hoverActorMaterial;
+    }
+
+    public Material GetSelectMaterial()
+    {
+        return selectActorMaterial;
+    }
+
+    public GameObject GetSymbolicModel(string modelID)
+    {
+        foreach (ModelBinding binding in defaultModelBindings)
+        {
+            if (binding.ID == modelID) return binding.Model;
+        }
+
+        return null;
     }
 }
