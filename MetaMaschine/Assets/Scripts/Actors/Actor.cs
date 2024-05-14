@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using Zenject;
 
@@ -9,6 +10,7 @@ public class Actor : MonoBehaviour, IActor
     [field: SerializeField] public Transform DefaultModelContainer { get; private set; }
     [field: SerializeField] public Transform SymbolicModelContainer { get; private set; }
     [field: SerializeField] public Transform LabelContainer { get; private set; }
+    [field: SerializeField] public TextMeshPro Label { get; private set; }
     public IActorSuperState CurrentSuperState { get; private set; }
     public IActorSubState CurrentSubState { get; private set; }
     public ActorData ActorData { get; set; }
@@ -24,6 +26,7 @@ public class Actor : MonoBehaviour, IActor
         _labelHelper = GetComponent<ActorLabelHelper>();
 
         _modelHelper.Actor = this;
+        _labelHelper.Actor = this;
     }
 
     [Inject]
@@ -90,7 +93,7 @@ public class Actor : MonoBehaviour, IActor
 
     public void SetLabelValue(string value)
     {
-
+        _labelHelper.SetTextValue(value);
     }
 
     public void SetLabelVisibility(bool visibility)
@@ -128,17 +131,16 @@ public class Actor : MonoBehaviour, IActor
 
     public void EnterHoverState()
     {
-
+        _modelHelper.SetMaterial(_visualManager.GetHoverMaterial());
     }
 
     public void EnterSelectState()
     {
-        Debug.Log($"Entity {transform.name} selected");
         _modelHelper.SetMaterial(_visualManager.GetSelectMaterial());
     }
 
     public void EnterInvisibleState()
     {
-
+        
     }
 }

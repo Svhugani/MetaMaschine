@@ -30,13 +30,21 @@ public class InputManager : MonoBehaviour, IInputManager
 
     public bool MPMHolded { get; private set; }
 
-    private Vector2 _prevPointer;
+    private Vector3 _prevScreenPosition;
 
     public event Action OnLPMClick;
+    public event Action OnPointerMove;
 
     private void Update()
     {
         ScreenPosition = Input.mousePosition;
+
+        if(ScreenPosition != _prevScreenPosition)
+        {
+            TriggerOnPointerMove();
+        }
+
+        _prevScreenPosition = ScreenPosition;
 
         ViewPosition = new Vector3(
             2 * (ScreenPosition.x / Screen.width - 0.5f), 
@@ -134,5 +142,10 @@ public class InputManager : MonoBehaviour, IInputManager
     public void TriggerOnLPMClick()
     {
         OnLPMClick?.Invoke();
+    }
+
+    public void TriggerOnPointerMove()
+    {
+        OnPointerMove?.Invoke();    
     }
 }

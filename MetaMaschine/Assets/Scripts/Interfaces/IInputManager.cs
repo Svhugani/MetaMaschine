@@ -18,6 +18,8 @@ public interface IInputManager
     public bool MPMReleased { get; }
     public bool MPMHolded { get; }
     public event Action OnLPMClick;
+    public event Action OnPointerMove;
     public void TriggerOnLPMClick();
+    public void TriggerOnPointerMove();
 
 }

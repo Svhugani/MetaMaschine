@@ -10,6 +10,8 @@ public class ActorModelHelper : MonoBehaviour
     private MeshCollider[] _colliders;
     private GameObject _defaultModel;
 
+    private Bounds _bounds;
+
     private void Start()
     {
         if(initializeFromContainer)
@@ -19,7 +21,6 @@ public class ActorModelHelper : MonoBehaviour
             Destroy(initModel);
         }
     }
-
 
     public void SetModel(GameObject newModel)
     {
@@ -36,10 +37,27 @@ public class ActorModelHelper : MonoBehaviour
             _colliders[i] = _renderers[i].gameObject.AddComponent<MeshCollider>();
             _renderers[i].AddComponent<ActorCollider>().Parent = Actor ;
         }
+
+        CalculateBounds();
+
+        Actor.SetLabelValue(_defaultModel.name);
+        Actor.LabelContainer.position =  Actor.transform.position  + (2 * _bounds.extents.y + 1) * Vector3.up;
     }
 
     public void SetMaterial(Material material)
     {
         foreach(var renderer in _renderers) renderer.material = material;
+    }
+
+    private void CalculateBounds()
+    {
+        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+
+        foreach(var r in _renderers)
+        {
+            bounds.Encapsulate(r.bounds);
+        }
+
+        _bounds = bounds;
     }
 }

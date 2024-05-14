@@ -122,7 +122,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 1, z: 1}
+  m_LocalScale: {x: 4, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 577100537369313821}
@@ -273,6 +273,7 @@ MonoBehaviour:
   <DefaultModelContainer>k__BackingField: {fileID: 7269344845484898150}
   <SymbolicModelContainer>k__BackingField: {fileID: 999487673364723940}
   <LabelContainer>k__BackingField: {fileID: 577100537369313821}
+  <Label>k__BackingField: {fileID: 4344547262968322556}
 --- !u!1 &8273488434479506572
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,7 +309,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 3, y: 1}
+  m_SizeDelta: {x: 3.8, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &7548164456220945988
 MeshRenderer:
