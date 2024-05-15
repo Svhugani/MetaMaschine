@@ -9,5 +9,7 @@ public interface IVisualManager : IManager
     public Material GetDefaultMaterial();
     public Material GetSelectMaterial();
     public Material GetHoverMaterial();
+    public Material GetMarkerHoverMaterial();   
+    public Material GetMarkerSelectMaterial();  
 
 }

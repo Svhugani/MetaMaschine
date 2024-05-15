@@ -4,12 +4,14 @@ using UnityEngine;
 public interface IActor 
 {
     public ActorData ActorData { get; }
+    public ActorState ActorState { get; }
     public IActorSuperState CurrentSuperState { get; }
     public IActorSubState CurrentSubState { get; }
     public void ChangeSuperState(IActorSuperState newState);
     public Vector3 GetPosition();
     public Vector3 GetRotation();
     public Vector3 GetScale();
+    public Bounds GetBounds();
     public void SetPosition(Vector3 position);
     public void SetRotation(Vector3 rotation);
     public void SetScale(Vector3 scale);

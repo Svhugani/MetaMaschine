@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using Zenject;
 
 public class ActorManager : MonoBehaviour, IActorManager
 {
+    [SerializeField] private ActorMarker actorMarker;
     private IInputManager _inputManager;
     private IViewManager _viewManager;
     private Actor[] _actors;
@@ -38,6 +40,8 @@ public class ActorManager : MonoBehaviour, IActorManager
                 if(_selected != null) _selected.EnterDefaultState();
                 result.EnterSelectState();
                 _selected = result;
+
+                actorMarker.Mark(_selected);
             }    
         }
 
@@ -45,13 +49,14 @@ public class ActorManager : MonoBehaviour, IActorManager
         {
             _selected.EnterDefaultState();
             _selected = null;
+            actorMarker.Unmark();
         }
         
     }
 
     public void RaycastToHovered()
     {
-        
+        if (_selected != null) return;
         if (RaycastActors(out IActor result)) 
         {
             if(_selected != result && _hovered != result)
@@ -59,8 +64,16 @@ public class ActorManager : MonoBehaviour, IActorManager
                 if (_hovered != null) _hovered.EnterDefaultState();
                 result.EnterHoverState();
                 _hovered = result;
+
+                actorMarker.Mark(_hovered);
             }
-        }  
+        }
+        else if (_hovered != null)
+        {
+            _hovered.EnterDefaultState();
+            _hovered = null;
+            actorMarker.Unmark();
+        }
     }
 
     public bool RaycastActors(out IActor result)

@@ -10,7 +10,7 @@ public class ActorModelHelper : MonoBehaviour
     private MeshCollider[] _colliders;
     private GameObject _defaultModel;
 
-    private Bounds _bounds;
+    public Bounds Bounds { get; private set; }
 
     private void Start()
     {
@@ -26,9 +26,8 @@ public class ActorModelHelper : MonoBehaviour
     {
         if (newModel == null) return;
         if(_defaultModel != null) Destroy(_defaultModel);
-        Debug.Log("Init model");
-        _defaultModel = Instantiate(newModel, Actor.DefaultModelContainer);
 
+        _defaultModel = Instantiate(newModel, Actor.DefaultModelContainer);
         _renderers = _defaultModel.GetComponentsInChildren<MeshRenderer>();
         _colliders = new MeshCollider[_renderers.Length];
 
@@ -41,7 +40,7 @@ public class ActorModelHelper : MonoBehaviour
         CalculateBounds();
 
         Actor.SetLabelValue(_defaultModel.name);
-        Actor.LabelContainer.position =  Actor.transform.position  + (2 * _bounds.extents.y + 1) * Vector3.up;
+        
     }
 
     public void SetMaterial(Material material)
@@ -51,13 +50,26 @@ public class ActorModelHelper : MonoBehaviour
 
     private void CalculateBounds()
     {
-        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+        if (_renderers.Length == 0)
+        {
+            Bounds = new Bounds();
+            return;
+        }
 
-        foreach(var r in _renderers)
+        Bounds bounds = new Bounds(_renderers[0].bounds.center, Vector3.zero);
+        foreach (var r in _renderers)
         {
             bounds.Encapsulate(r.bounds);
         }
 
-        _bounds = bounds;
+        Bounds = bounds;
+        Actor.LabelContainer.position = Actor.transform.position + (2 * Bounds.extents.y + 1) * Vector3.up;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (Actor == null) return;
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(Bounds.center, 2);
     }
 }

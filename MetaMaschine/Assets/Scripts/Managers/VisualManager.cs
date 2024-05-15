@@ -17,6 +17,8 @@ public class VisualManager : MonoBehaviour, IVisualManager
     [SerializeField] private Material defaultActorMaterial;
     [SerializeField] private Material hoverActorMaterial;
     [SerializeField] private Material selectActorMaterial;
+    [SerializeField] private Material markerSelectMaterial;
+    [SerializeField] private Material markerHoverMaterial;
 
     public Material GetDefaultMaterial()
     {
@@ -36,6 +38,16 @@ public class VisualManager : MonoBehaviour, IVisualManager
     public Material GetHoverMaterial()
     {
         return hoverActorMaterial;
+    }
+
+    public Material GetMarkerHoverMaterial()
+    {
+        return markerHoverMaterial;
+    }
+
+    public Material GetMarkerSelectMaterial()
+    {
+        return markerSelectMaterial;
     }
 
     public Material GetSelectMaterial()

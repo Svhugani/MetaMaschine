@@ -14,6 +14,7 @@ public class Actor : MonoBehaviour, IActor
     public IActorSuperState CurrentSuperState { get; private set; }
     public IActorSubState CurrentSubState { get; private set; }
     public ActorData ActorData { get; set; }
+    public ActorState ActorState { get; private set; }
     private ActorAnimationHelper _animationHelper;
     private ActorModelHelper _modelHelper;
     private ActorLabelHelper _labelHelper;
@@ -59,6 +60,11 @@ public class Actor : MonoBehaviour, IActor
     public Vector3 GetScale()
     {
         return ActorData.Scale;
+    }
+
+    public Bounds GetBounds()
+    {
+        return _modelHelper.Bounds;
     }
 
     public void SetActorCategory(string category)
@@ -126,21 +132,24 @@ public class Actor : MonoBehaviour, IActor
 
     public void EnterDefaultState()
     {
+        ActorState = ActorState.Default;
         _modelHelper.SetMaterial(_visualManager.GetDefaultMaterial());
     }
 
     public void EnterHoverState()
     {
+        ActorState = ActorState.Hovered;
         _modelHelper.SetMaterial(_visualManager.GetHoverMaterial());
     }
 
     public void EnterSelectState()
     {
+        ActorState = ActorState.Selected;
         _modelHelper.SetMaterial(_visualManager.GetSelectMaterial());
     }
 
     public void EnterInvisibleState()
     {
-        
+        ActorState = ActorState.Invisible;
     }
 }
