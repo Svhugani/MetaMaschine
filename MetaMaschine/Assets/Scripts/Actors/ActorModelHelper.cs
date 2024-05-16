@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 
 public class ActorModelHelper : MonoBehaviour
 {
-    [SerializeField] private bool initializeFromContainer = false;
     public Actor Actor { get; set; }
     private MeshRenderer[] _renderers;
     private MeshCollider[] _colliders;
@@ -12,35 +12,37 @@ public class ActorModelHelper : MonoBehaviour
 
     public Bounds Bounds { get; private set; }
 
-    private void Start()
+    private IVisualManager _visualManager;
+
+    [Inject] public void Construct(IVisualManager visualManager)
     {
-        if(initializeFromContainer)
-        {
-            GameObject initModel = Actor.DefaultModelContainer.GetChild(0).gameObject;
-            SetModel(initModel);
-            Destroy(initModel);
-        }
+        _visualManager = visualManager;
+    }
+
+    public void SetModel(string modelID)
+    {
+        GameObject newModel = _visualManager.GetDefaultModel(modelID);
+        SetModel(newModel); 
     }
 
     public void SetModel(GameObject newModel)
     {
         if (newModel == null) return;
-        if(_defaultModel != null) Destroy(_defaultModel);
+
+        if (_defaultModel != null) Destroy(_defaultModel);
 
         _defaultModel = Instantiate(newModel, Actor.DefaultModelContainer);
         _renderers = _defaultModel.GetComponentsInChildren<MeshRenderer>();
         _colliders = new MeshCollider[_renderers.Length];
 
-        for(int i = 0; i < _renderers.Length; i++)
+        for (int i = 0; i < _renderers.Length; i++)
         {
             _colliders[i] = _renderers[i].gameObject.AddComponent<MeshCollider>();
-            _renderers[i].AddComponent<ActorCollider>().Parent = Actor ;
+            _renderers[i].AddComponent<ActorCollider>().Parent = Actor;
         }
 
         CalculateBounds();
-
         Actor.SetLabelValue(_defaultModel.name);
-        
     }
 
     public void SetMaterial(Material material)

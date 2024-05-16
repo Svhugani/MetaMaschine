@@ -15,9 +15,15 @@ public interface IActor
     public void SetPosition(Vector3 position);
     public void SetRotation(Vector3 rotation);
     public void SetScale(Vector3 scale);
+    public void SetInfoVisibility(bool visibility);    
+    public void SetInfoPriority(InfoPriority priority);  
     public void SetLabelVisibility(bool visibility);
-    public void SetLabelValue(string value);    
+    public void SetLabelValue(string value);
+    public void SetIconVisibility(bool visibility);
+    public void SetIcon(string iconID);
+    public void SetIcon(Texture2D tex);
     public void SetDefaultModel(string modelID);
+    public void SetDefaultModel(GameObject newModel);
     public void SetSymbolicModel(string modelID);
     public void SetActorType(ActorType actorType);
     public void SetActorName(string actorName);

@@ -1,5 +1,6 @@
 using UnityEngine;
 using Zenject;
+using DG.Tweening;
 
 public class ActorMarker : MonoBehaviour
 {
@@ -8,13 +9,19 @@ public class ActorMarker : MonoBehaviour
 
     private IVisualManager _visualManager;
     private Material _currentMaterial;
+    private Tween _currentTween;
 
-    [Inject] public void Construct(IVisualManager visualManager)
+    [Inject]
+    public void Construct(IVisualManager visualManager)
     {
         _visualManager = visualManager;
     }
+
     public void Mark(IActor actor)
     {
+        // Kill any existing tweens to avoid overlap
+        _currentTween?.Kill();
+
         Bounds bounds = actor.GetBounds();
         visualContainer.position = bounds.center;
         Vector3 ext = bounds.extents;
@@ -32,17 +39,35 @@ public class ActorMarker : MonoBehaviour
         {
             case ActorState.Hovered: SetMaterial(_visualManager.GetMarkerHoverMaterial()); break;
             case ActorState.Selected: SetMaterial(_visualManager.GetMarkerSelectMaterial()); break;
-            default: Debug.Log("no state");  break;
+            default: Debug.Log("no state"); break;
         }
 
         SetScaleToActor(actor);
 
-        visualContainer.gameObject.SetActive(true); 
+        visualContainer.gameObject.SetActive(true);
+
+        // Create a sequence for the wobble effect
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(visualContainer.DOScale(Vector3.one * 1.2f, 0.15f).SetEase(Ease.Linear));
+        sequence.Append(visualContainer.DOScale(Vector3.one, 0.30f).SetEase(Ease.Linear));
+
+        _currentTween = sequence;
     }
 
     public void Unmark()
     {
-        visualContainer.gameObject.SetActive(false);    
+        _currentTween?.Kill();
+        visualContainer.gameObject.SetActive(false);
+
+/*        Sequence sequence = DOTween.Sequence();
+        sequence.Append(visualContainer.DOScale(Vector3.one * 1.2f, 0.25f).SetEase(Ease.OutBack));
+        sequence.Append(visualContainer.DOScale(Vector3.one, 0.25f).SetEase(Ease.InBack));
+        sequence.OnComplete(() =>
+        {
+            visualContainer.gameObject.SetActive(false);
+        });
+
+        _currentTween = sequence;*/
     }
 
     private void SetMaterial(Material material)
@@ -56,7 +81,7 @@ public class ActorMarker : MonoBehaviour
     private void SetScaleToActor(IActor actor)
     {
         Vector3 size = actor.GetBounds().extents;
-        
+
         SetScale(Mathf.Min(Mathf.Min(size.x, size.y), size.z));
     }
 

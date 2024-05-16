@@ -10,10 +10,20 @@ public class ModelBinding
     public GameObject Model;
 }
 
+[Serializable]
+public class TextureBinding
+{
+    public string ID;
+    public Texture2D Texture;
+}
+
 public class VisualManager : MonoBehaviour, IVisualManager
 {
     [SerializeField] private List<ModelBinding> defaultModelBindings;
     [SerializeField] private List<ModelBinding> symbolicModelBindings;
+    [SerializeField] private List<TextureBinding> iconBindings;
+    [SerializeField] private Texture2D warningIcon;
+    [SerializeField] private Texture2D errorIcon;
     [SerializeField] private Material defaultActorMaterial;
     [SerializeField] private Material hoverActorMaterial;
     [SerializeField] private Material selectActorMaterial;
@@ -63,5 +73,25 @@ public class VisualManager : MonoBehaviour, IVisualManager
         }
 
         return null;
+    }
+
+    public Texture2D GetIcon(string iconID)
+    {
+        foreach (TextureBinding binding in iconBindings)
+        {
+            if (binding.ID == iconID) return binding.Texture;
+        }
+
+        return null;
+    }
+
+    public Texture2D GetWarningIcon()
+    {
+        return warningIcon;
+    }
+
+    public Texture2D GetErrorIcon()
+    {
+        return errorIcon;   
     }
 }

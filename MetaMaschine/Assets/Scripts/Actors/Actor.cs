@@ -4,30 +4,30 @@ using TMPro;
 using UnityEngine;
 using Zenject;
 
-[RequireComponent(typeof(ActorModelHelper), typeof(ActorLabelHelper), typeof(ActorAnimationHelper))]
+[RequireComponent(typeof(ActorModelHelper), typeof(ActorInfoHelper), typeof(ActorAnimationHelper))]
 public class Actor : MonoBehaviour, IActor
 {
     [field: SerializeField] public Transform DefaultModelContainer { get; private set; }
     [field: SerializeField] public Transform SymbolicModelContainer { get; private set; }
     [field: SerializeField] public Transform LabelContainer { get; private set; }
-    [field: SerializeField] public TextMeshPro Label { get; private set; }
+    
     public IActorSuperState CurrentSuperState { get; private set; }
     public IActorSubState CurrentSubState { get; private set; }
     public ActorData ActorData { get; set; }
     public ActorState ActorState { get; private set; }
     private ActorAnimationHelper _animationHelper;
     private ActorModelHelper _modelHelper;
-    private ActorLabelHelper _labelHelper;
+    private ActorInfoHelper _infoHelper;
     private IVisualManager _visualManager;
 
     private void Awake()
     {
         _animationHelper = GetComponent<ActorAnimationHelper>();
         _modelHelper = GetComponent<ActorModelHelper>();
-        _labelHelper = GetComponent<ActorLabelHelper>();
+        _infoHelper = GetComponent<ActorInfoHelper>();
 
         _modelHelper.Actor = this;
-        _labelHelper.Actor = this;
+        _infoHelper.Actor = this;
     }
 
     [Inject]
@@ -94,17 +94,12 @@ public class Actor : MonoBehaviour, IActor
 
     public void SetDefaultModel(string modelID)
     {
-        _modelHelper.SetModel(_visualManager.GetDefaultModel(modelID));
+        _modelHelper.SetModel(modelID);
     }
 
-    public void SetLabelValue(string value)
+    public void SetDefaultModel(GameObject newModel)
     {
-        _labelHelper.SetTextValue(value);
-    }
-
-    public void SetLabelVisibility(bool visibility)
-    {
-
+        _modelHelper.SetModel(newModel);
     }
 
     public void SetPosition(Vector3 position)
@@ -151,5 +146,39 @@ public class Actor : MonoBehaviour, IActor
     public void EnterInvisibleState()
     {
         ActorState = ActorState.Invisible;
+    }
+
+    public void SetInfoVisibility(bool visibility)
+    {
+        LabelContainer.gameObject.SetActive(visibility);
+    }
+
+    public void SetInfoPriority(InfoPriority priority)
+    {
+        _infoHelper.SetInfoPriority(priority);
+    }
+
+    public void SetIconVisibility(bool visibility)
+    {
+        _infoHelper.SetIconVisibility(visibility);
+    }
+
+    public void SetIcon(string iconID)
+    {
+        _infoHelper.SetIcon(iconID);
+    }
+
+    public void SetIcon(Texture2D icon)
+    {
+        _infoHelper.SetIcon(icon);
+    }
+    public void SetLabelValue(string value)
+    {
+        _infoHelper.SetTextValue(value);
+    }
+
+    public void SetLabelVisibility(bool visibility)
+    {
+        _infoHelper.SetLabelVisibility(visibility);
     }
 }
