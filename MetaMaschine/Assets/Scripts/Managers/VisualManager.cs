@@ -34,6 +34,23 @@ public class VisualManager : MonoBehaviour, IVisualManager
     [SerializeField] private Color errorColor;
     [SerializeField] private Color defaultColor;
     [SerializeField] private Color maintenanceColor;
+    [SerializeField] private Shader xRayShader;
+
+    private Shader _urpLitShader;
+
+    private void Awake()
+    {
+        _urpLitShader = Shader.Find("Universal Render Pipeline/Lit");
+    }
+    public void SetActorMaterialToDefault()
+    {
+        defaultActorMaterial.shader = _urpLitShader;
+    }
+
+    public void SetActorMaterialToXRay()
+    {
+        defaultActorMaterial.shader = xRayShader;
+    }
 
     public Material GetDefaultMaterial()
     {

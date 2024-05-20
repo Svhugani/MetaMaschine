@@ -58,6 +58,11 @@ public class Actor : MonoBehaviour, IActor
         CurrentSuperState.EnterSuperState(this);
     }
 
+    public Transform GetTransform()
+    {
+        return DefaultModelContainer;
+    }
+
     public Vector3 GetPosition()
     {
         return ActorData.Position;  

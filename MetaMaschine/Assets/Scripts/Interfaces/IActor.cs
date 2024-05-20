@@ -10,6 +10,7 @@ public interface IActor
     public IActorSuperState CurrentSuperState { get; }
     public IActorSubState CurrentSubState { get; }
     public void ChangeSuperState(IActorSuperState newState);
+    public Transform GetTransform();
     public Vector3 GetPosition();
     public Vector3 GetRotation();
     public Vector3 GetScale();

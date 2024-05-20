@@ -15,6 +15,8 @@ public interface IVisualManager : IManager
     public Material GetHoverMaterial();
     public Material GetMarkerHoverMaterial();   
     public Material GetMarkerSelectMaterial();
+    public void SetActorMaterialToDefault();
+    public void SetActorMaterialToXRay();
     public Color GetErrorColor();
     public Color GetWarningColor();
     public Color GetDefaultColor();
