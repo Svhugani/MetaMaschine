@@ -24,11 +24,16 @@ public class VisualManager : MonoBehaviour, IVisualManager
     [SerializeField] private List<TextureBinding> iconBindings;
     [SerializeField] private Texture2D warningIcon;
     [SerializeField] private Texture2D errorIcon;
+    [SerializeField] private Texture2D maintenanceIcon;
     [SerializeField] private Material defaultActorMaterial;
     [SerializeField] private Material hoverActorMaterial;
     [SerializeField] private Material selectActorMaterial;
     [SerializeField] private Material markerSelectMaterial;
     [SerializeField] private Material markerHoverMaterial;
+    [SerializeField] private Color warningColor;
+    [SerializeField] private Color errorColor;
+    [SerializeField] private Color defaultColor;
+    [SerializeField] private Color maintenanceColor;
 
     public Material GetDefaultMaterial()
     {
@@ -94,4 +99,30 @@ public class VisualManager : MonoBehaviour, IVisualManager
     {
         return errorIcon;   
     }
+
+    public Texture2D GetMaintenanceIcon()
+    {
+        return maintenanceIcon;
+    }
+
+    public Color GetWarningColor()
+    {
+        return warningColor;
+    }
+
+    public Color GetErrorColor() 
+    {
+        return errorColor;
+    }
+
+    public Color GetMaintenanceColor()
+    {
+        return maintenanceColor;
+    }
+
+    public Color GetDefaultColor()
+    {
+        return defaultColor;
+    }
+
 }

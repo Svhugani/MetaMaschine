@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -13,12 +14,22 @@ public class Actor : MonoBehaviour, IActor
     
     public IActorSuperState CurrentSuperState { get; private set; }
     public IActorSubState CurrentSubState { get; private set; }
-    public ActorData ActorData { get; set; }
+    public ActorData ActorData { get; private set; }
+    public ActorDynamicData ActorDynamicData { get; private set; }
     public ActorState ActorState { get; private set; }
+
+
     private ActorAnimationHelper _animationHelper;
     private ActorModelHelper _modelHelper;
     private ActorInfoHelper _infoHelper;
     private IVisualManager _visualManager;
+
+    public event Action<IActor> OnSelected;
+    public event Action<IActor> OnHovered;
+    public event Action<IActor> OnDefault;
+    public event Action<IActor> OnInvisible;
+    public event Action<IActor> OnActorDataSet;
+    public event Action<IActor> OnActorDynamicDataSet;
 
     private void Awake()
     {
@@ -153,9 +164,14 @@ public class Actor : MonoBehaviour, IActor
         LabelContainer.gameObject.SetActive(visibility);
     }
 
-    public void SetInfoPriority(InfoPriority priority)
+    public void SetInfoPriority(int priority)
     {
         _infoHelper.SetInfoPriority(priority);
+    }
+
+    public void SetInfoColor(Color color)
+    {
+        _infoHelper.SetInfoColor(color);
     }
 
     public void SetIconVisibility(bool visibility)
@@ -180,5 +196,68 @@ public class Actor : MonoBehaviour, IActor
     public void SetLabelVisibility(bool visibility)
     {
         _infoHelper.SetLabelVisibility(visibility);
+    }
+
+    public void TriggerOnSelected()
+    {
+        EnterSelectState();
+        OnSelected?.Invoke(this);
+    }
+
+    public void TriggerOnHovered()
+    {
+        EnterHoverState();
+        OnHovered?.Invoke(this);
+    }
+
+    public void TriggerOnDefault()
+    {
+        EnterDefaultState();
+        OnDefault?.Invoke(this);
+    }
+
+    public void TriggerOnInvisible()
+    {
+        EnterInvisibleState();
+        OnInvisible?.Invoke(this);
+    }
+
+    public void TriggerOnDataSet(ActorData data)
+    {
+        ActorData = data;
+        OnActorDataSet?.Invoke(this);
+    }
+
+    public void TriggerOnDynamicDatSet(ActorDynamicData dynamicData)
+    {
+        ActorDynamicData = dynamicData;
+        OnActorDynamicDataSet?.Invoke(this);
+        Debug.Log("Trigger on dynamic data set");
+
+        Texture2D texture = null;
+        Color color = _visualManager.GetDefaultColor();
+        string label;
+        int priority = 0;
+
+        if (ActorDynamicData == null || ActorDynamicData.ActorStatus == null || ActorDynamicData.ActorStatus.StatusID == "0")
+        {
+            label = ActorData.ActorName;
+        }
+
+        else
+        {
+            texture = _visualManager.GetIcon(ActorDynamicData.ActorStatus.IconID);
+            color = ActorDynamicData.ActorStatus.Color;
+            label = ActorDynamicData.ActorStatus.StatusName;
+            priority= ActorDynamicData.ActorStatus.Priority;    
+        }
+
+
+        SetInfoVisibility(true);
+        SetIcon(texture);
+        SetInfoPriority(priority);
+        SetInfoColor(color);
+        SetLabelValue(label);
+        
     }
 }

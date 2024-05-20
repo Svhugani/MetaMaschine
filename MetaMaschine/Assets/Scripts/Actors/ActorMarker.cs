@@ -11,6 +11,8 @@ public class ActorMarker : MonoBehaviour
     private Material _currentMaterial;
     private Tween _currentTween;
 
+    private const float Y_OFFSET = .1f;
+
     [Inject]
     public void Construct(IVisualManager visualManager)
     {
@@ -30,16 +32,16 @@ public class ActorMarker : MonoBehaviour
         corners[1].transform.localPosition = new Vector3(-ext.x, ext.y, ext.z);
         corners[2].transform.localPosition = new Vector3(-ext.x, ext.y, -ext.z);
         corners[3].transform.localPosition = new Vector3(ext.x, ext.y, -ext.z);
-        corners[4].transform.localPosition = new Vector3(ext.x, -ext.y, ext.z);
-        corners[5].transform.localPosition = new Vector3(-ext.x, -ext.y, ext.z);
-        corners[6].transform.localPosition = new Vector3(-ext.x, -ext.y, -ext.z);
-        corners[7].transform.localPosition = new Vector3(ext.x, -ext.y, -ext.z);
+        corners[4].transform.localPosition = new Vector3(ext.x, -ext.y + Y_OFFSET, ext.z);
+        corners[5].transform.localPosition = new Vector3(-ext.x, -ext.y + Y_OFFSET, ext.z);
+        corners[6].transform.localPosition = new Vector3(-ext.x, -ext.y + Y_OFFSET, -ext.z);
+        corners[7].transform.localPosition = new Vector3(ext.x, -ext.y + Y_OFFSET, -ext.z);
 
         switch (actor.ActorState)
         {
             case ActorState.Hovered: SetMaterial(_visualManager.GetMarkerHoverMaterial()); break;
             case ActorState.Selected: SetMaterial(_visualManager.GetMarkerSelectMaterial()); break;
-            default: Debug.Log("no state"); break;
+            default: break;
         }
 
         SetScaleToActor(actor);
@@ -48,8 +50,8 @@ public class ActorMarker : MonoBehaviour
 
         // Create a sequence for the wobble effect
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(visualContainer.DOScale(Vector3.one * 1.2f, 0.15f).SetEase(Ease.Linear));
-        sequence.Append(visualContainer.DOScale(Vector3.one, 0.30f).SetEase(Ease.Linear));
+        sequence.Append(visualContainer.DOScale(Vector3.one * 1.1f, 0.15f).SetEase(Ease.Linear));
+        sequence.Append(visualContainer.DOScale(Vector3.one, 0.2f).SetEase(Ease.Linear));
 
         _currentTween = sequence;
     }
@@ -72,8 +74,7 @@ public class ActorMarker : MonoBehaviour
 
     private void SetMaterial(Material material)
     {
-        //if(material == _currentMaterial) return;
-        Debug.Log("Material: " + material.name);
+        if(material == _currentMaterial) return;
         foreach (var c in corners) c.material = material;
         _currentMaterial = material;
     }

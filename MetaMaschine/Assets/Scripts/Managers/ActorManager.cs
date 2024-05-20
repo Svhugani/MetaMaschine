@@ -10,26 +10,36 @@ public class ActorManager : MonoBehaviour, IActorManager
     private IInputManager _inputManager;
     private IViewManager _viewManager;
     private IVisualManager _visualManager;
-    private Actor[] _actors;
+    private IUIManager _uiManager;
+    public List<IActor> Actors { get; private set; } = new List<IActor>();
 
     private IActor _selected;
     private IActor _hovered;
 
-    [Inject] public void Construct(IInputManager inputManger, IViewManager viewManager, IVisualManager visualManager)
+    [Inject] public void Construct(IInputManager inputManger, IViewManager viewManager, IVisualManager visualManager, IUIManager uiManager)
     {
         _inputManager = inputManger;
         _viewManager = viewManager;
         _visualManager = visualManager;
+        _uiManager = uiManager;
 
         _inputManager.OnLPMClick += RaycastToSelection;
         _inputManager.OnPointerMove += RaycastToHover;
+        _inputManager.OnRPMClick += ClearSelection;
     }
 
     private void Start()
     {
-        _actors = FindObjectsByType<Actor>(FindObjectsSortMode.InstanceID);
+        Actor[] temp = FindObjectsByType<Actor>(FindObjectsSortMode.InstanceID);
 
-        foreach(IActor a in _actors)
+        Actors.Clear();
+        
+        foreach(var a in temp)
+        {
+            Actors.Add(a);
+        }
+
+        foreach(IActor a in Actors)
         {
             Actor actor = a as Actor;   
             GameObject initModel = actor.DefaultModelContainer.GetChild(0).gameObject;
@@ -38,61 +48,76 @@ public class ActorManager : MonoBehaviour, IActorManager
 
             ActorData data = new ActorData();   
             data.ActorName = initModel.name;
-            actor.ActorData = data;
 
+            actor.TriggerOnDataSet(data);
+            actor.TriggerOnDynamicDatSet(null);
             Destroy(initModel);
 
-            SetDefaultInfo(actor);
         }
+
+        _uiManager.SetupActorsFactoryPanel("AVIO CHEM LAB FACILITY", "LAB E-24", Actors);
     }
 
 
     public void RaycastToSelection()
     {
-
         if (RaycastActors(out IActor result))
         {
-            if(_hovered == result) _hovered = null;
-            if (_selected != result)
-            {
-                if(_selected != null) _selected.EnterDefaultState();
-                result.EnterSelectState();
-                _selected = result;
-
-                actorMarker.Mark(_selected);
-            }    
+            HandleSelection(result); 
         }
-
-        else if (_selected != null) 
-        {
-            _selected.EnterDefaultState();
-            _selected = null;
-            actorMarker.Unmark();
-        }
-        
     }
 
     public void RaycastToHover()
     {
         if (_selected != null) return;
-        if (RaycastActors(out IActor result)) 
+        if (RaycastActors(out IActor result))
         {
-            if(_selected != result && _hovered != result)
-            {
-                if (_hovered != null) _hovered.EnterDefaultState();
-                result.EnterHoverState();
-                _hovered = result;
-
-                actorMarker.Mark(_hovered);
-            }
+            HandleHover(result);
         }
         else if (_hovered != null)
         {
-            _hovered.EnterDefaultState();
+            _hovered.TriggerOnDefault();
             _hovered = null;
             actorMarker.Unmark();
         }
     }
+
+    public void HandleSelection(IActor actor)
+    {
+        if (_hovered == actor) _hovered = null;
+        if (_selected != actor)
+        {
+            if (_selected != null) _selected.TriggerOnDefault();
+            actor.TriggerOnSelected();
+            _selected = actor;
+
+            actorMarker.Mark(_selected);
+        }
+    }
+
+    public void HandleHover(IActor actor)
+    {
+        if (_selected != actor && _hovered != actor)
+        {
+            if (_hovered != null) _hovered.TriggerOnDefault();
+            actor.TriggerOnHovered();
+            _hovered = actor;
+
+            actorMarker.Mark(_hovered);
+        }
+    }
+
+    public void ClearSelection()
+    {
+        if (_selected != null)
+        {
+            _selected.TriggerOnDefault();
+            _selected = null;
+            actorMarker.Unmark();
+        }
+    }
+
+
 
     public bool RaycastActors(out IActor result)
     {
@@ -116,17 +141,25 @@ public class ActorManager : MonoBehaviour, IActorManager
 
     public void DeselectAllActors()
     {
-        foreach(var actor in _actors)
+        foreach(var actor in Actors)
         {
-            actor.EnterDefaultState();  
+            actor.TriggerOnDefault();  
         }
     }
 
-    public void SetWarningInfo(string actorID)
+/*    public void SetWarningInfo(string actorID)
     {
         if(GetActor(actorID, out IActor actor))
         {
             SetWarningInfo(actor);
+        }
+    }
+
+    public void SetMaintenanceInfo(string actorID)
+    {
+        if (GetActor(actorID, out IActor actor))
+        {
+            SetMaintenanceInfo(actor);
         }
     }
 
@@ -136,9 +169,9 @@ public class ActorManager : MonoBehaviour, IActorManager
         {
             SetErrorInfo(actor);
         }
-    }
+    }*/
 
-    public void SetDefaultInfo(string actorID)
+/*    public void SetDefaultInfo(string actorID)
     {
         if (GetActor(actorID, out IActor actor))
         {
@@ -152,6 +185,16 @@ public class ActorManager : MonoBehaviour, IActorManager
         actor.SetLabelValue("WARNING");
         actor.SetIcon(_visualManager.GetWarningIcon());
         actor.SetInfoPriority(InfoPriority.Medium);
+        actor.SetInfoColor(_visualManager.GetWarningColor());
+    }
+
+    public void SetMaintenanceInfo(IActor actor)
+    {
+        actor.SetInfoVisibility(true);
+        actor.SetLabelValue("MAINTENANCE");
+        actor.SetIcon(_visualManager.GetMaintenanceIcon());
+        actor.SetInfoPriority(InfoPriority.Medium);
+        actor.SetInfoColor(_visualManager.GetMaintenanceColor());
     }
 
     public void SetErrorInfo(IActor actor)
@@ -160,6 +203,7 @@ public class ActorManager : MonoBehaviour, IActorManager
         actor.SetLabelValue("ERROR");
         actor.SetIcon(_visualManager.GetErrorIcon());
         actor.SetInfoPriority(InfoPriority.High);
+        actor.SetInfoColor(_visualManager.GetErrorColor());
     }
 
     public void SetDefaultInfo(IActor actor)
@@ -168,13 +212,14 @@ public class ActorManager : MonoBehaviour, IActorManager
         actor.SetIconVisibility(false);
         actor.SetLabelValue(actor.ActorData.ActorName);
         actor.SetInfoPriority(InfoPriority.Low);
-    }
+        actor.SetInfoColor(_visualManager.GetDefaultColor());
+    }*/
 
     public bool GetActor(string actorID, out IActor actor)
     {
         actor = null;   
 
-        foreach(var a in _actors)
+        foreach(var a in Actors)
         {
             if(a.ActorData.ActorID == actorID)
             {
@@ -190,9 +235,9 @@ public class ActorManager : MonoBehaviour, IActorManager
     {
         actor = null;
 
-        if(pointer < _actors.Length )
+        if(pointer < Actors.Count )
         {
-            actor = _actors[pointer];
+            actor = Actors[pointer];
             return true;
         }
 
@@ -201,6 +246,6 @@ public class ActorManager : MonoBehaviour, IActorManager
 
     public int GetActorCount()
     {
-        return _actors.Length;
+        return Actors.Count;
     }
 }

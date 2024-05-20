@@ -19,7 +19,7 @@ public class ActorInfoHelper : MonoBehaviour
     private Tween _labelFadeTween;
 
     // Define the target size for the icon in world units
-    private readonly Vector2 targetIconSize = new Vector2(1f, 1f); // Change these values to your desired size
+    private readonly Vector2 targetIconSize = new Vector2(.6f, .6f); // Change these values to your desired size
 
     // Define the off-screen position and the target position
     private readonly Vector3 offScreenPosition = new Vector3(-7, 0, 0); // Change this to your off-screen position
@@ -35,22 +35,19 @@ public class ActorInfoHelper : MonoBehaviour
         _iconContainerRenderer = IconContainer.GetComponent<SpriteRenderer>();
     }
 
-    public void SetInfoPriority(InfoPriority priority)
-    {
-        switch (priority)
-        {
-            case InfoPriority.Low: SetLayer(0); break;
-            case InfoPriority.High: SetLayer(20); break;
-            case InfoPriority.Medium: SetLayer(10); break;
-        }
-    }
-
-    private void SetLayer(int layer)
+    public void SetInfoPriority(int layer)
     {
         Label.sortingOrder = layer;
         Icon.sortingOrder = layer;
         LabelContainer.GetComponent<SpriteRenderer>().sortingOrder = layer;
         _iconContainerRenderer.sortingOrder = layer;
+
+    }
+
+    public void SetInfoColor(Color color)
+    {
+        Label.color = color;
+        Icon.color = color;
     }
 
     public void SetTextValue(string text)
@@ -110,16 +107,18 @@ public class ActorInfoHelper : MonoBehaviour
                 Vector2 spriteSize = new Vector2(sprite.bounds.size.x, sprite.bounds.size.y);
                 Vector3 scale = new Vector3(targetIconSize.x / spriteSize.x, targetIconSize.y / spriteSize.y, 1f);
                 Icon.transform.localScale = scale;
+
+                // Slide in and fade in the new icon and container
+                _iconMoveTween = IconContainer.DOLocalMove(targetPosition, 0.35f);
+                _iconFadeTween = Icon.DOFade(1, 0.35f);
+                _iconContainerRenderer.DOFade(1, 0.35f).OnComplete(() =>
+                {
+                    _iconMoveTween = null;
+                    _iconFadeTween = null;
+                });
             }
 
-            // Slide in and fade in the new icon and container
-            _iconMoveTween = IconContainer.DOLocalMove(targetPosition, 0.35f);
-            _iconFadeTween = Icon.DOFade(1, 0.35f);
-            _iconContainerRenderer.DOFade(1, 0.35f).OnComplete(() =>
-            {
-                _iconMoveTween = null;
-                _iconFadeTween = null;
-            });
+
         });
     }
 

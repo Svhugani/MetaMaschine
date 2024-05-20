@@ -23,6 +23,6 @@ public class DefaultMonoInstaller : MonoInstaller<DefaultMonoInstaller>
         Container.Bind<IViewManager >().FromInstance(viewManager).AsSingle();
         Container.Bind<IUIManager>().FromInstance(uiManager).AsSingle();
         Container.Bind<IAudioManager>().FromInstance(audioManager).AsSingle();
-        Container.Bind<ILogger>().FromInstance(logger).AsSingle();  
+        Container.Bind<ILogger>().FromInstance(logger).AsSingle();
     }
 }

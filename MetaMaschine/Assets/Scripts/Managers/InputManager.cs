@@ -33,7 +33,9 @@ public class InputManager : MonoBehaviour, IInputManager
     private Vector3 _prevScreenPosition;
 
     public event Action OnLPMClick;
+    public event Action OnMPMlick;
     public event Action OnPointerMove;
+    public event Action OnRPMClick;
 
     private void Update()
     {
@@ -93,6 +95,7 @@ public class InputManager : MonoBehaviour, IInputManager
 
         else if (Input.GetMouseButtonUp(1))
         {
+            if (RPMHolded || RPMPressed) TriggerOnRPMClick();
             RPMPressed = false;
             RPMReleased = true;
             RPMHolded = false;
@@ -120,6 +123,7 @@ public class InputManager : MonoBehaviour, IInputManager
 
         else if (Input.GetMouseButtonUp(2))
         {
+            if (MPMHolded || MPMPressed) TriggerOnMPMClick();
             MPMPressed = false;
             MPMReleased = true;
             MPMHolded = false;
@@ -142,6 +146,16 @@ public class InputManager : MonoBehaviour, IInputManager
     public void TriggerOnLPMClick()
     {
         OnLPMClick?.Invoke();
+    }
+
+    public void TriggerOnRPMClick()
+    {
+        OnRPMClick?.Invoke();
+    }
+
+    public void TriggerOnMPMClick()
+    {
+        OnMPMlick?.Invoke();
     }
 
     public void TriggerOnPointerMove()

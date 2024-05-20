@@ -1,9 +1,11 @@
 
+using System;
 using UnityEngine;
 
 public interface IActor 
 {
     public ActorData ActorData { get; }
+    public ActorDynamicData ActorDynamicData { get; }
     public ActorState ActorState { get; }
     public IActorSuperState CurrentSuperState { get; }
     public IActorSubState CurrentSubState { get; }
@@ -16,7 +18,8 @@ public interface IActor
     public void SetRotation(Vector3 rotation);
     public void SetScale(Vector3 scale);
     public void SetInfoVisibility(bool visibility);    
-    public void SetInfoPriority(InfoPriority priority);  
+    public void SetInfoPriority(int priority);
+    public void SetInfoColor(Color color);
     public void SetLabelVisibility(bool visibility);
     public void SetLabelValue(string value);
     public void SetIconVisibility(bool visibility);
@@ -34,4 +37,18 @@ public interface IActor
     public void EnterHoverState();  
     public void EnterSelectState();
     public void EnterInvisibleState();
+    public event Action<IActor> OnSelected;
+    public event Action<IActor> OnHovered;
+    public event Action<IActor> OnDefault;
+    public event Action<IActor> OnInvisible;
+    public event Action<IActor> OnActorDataSet;
+    public event Action<IActor> OnActorDynamicDataSet;
+    public void TriggerOnSelected();
+    public void TriggerOnHovered(); 
+    public void TriggerOnDefault();
+    public void TriggerOnInvisible();
+    public void TriggerOnDataSet(ActorData data);
+    public void TriggerOnDynamicDatSet(ActorDynamicData dynamicData);
+
+
 }
