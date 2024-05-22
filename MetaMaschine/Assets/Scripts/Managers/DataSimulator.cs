@@ -50,11 +50,12 @@ public class DataSimulator : MonoBehaviour
         KPI performance = new KPI("PERFORMANCE", 100 * curveA.Evaluate(normTime), "%", 0, 0, 100);
         KPI ooe = new KPI("OOE", curveB.Evaluate(normTime), "", 2, 0, 1);
         KPI odf = new KPI("ODF", 0.5f + 0.5f * curveB.Evaluate(1 - normTime), "", 2, 0, 1);
+        KPI temperature = new KPI("TEMPERATURE", 100 * (0.2f + 0.5f * curveC.Evaluate(1 - normTime)), "°C", 0, 0, 100);
         KPI duration = new KPI("DURATION", 20 * normTime, "h", 0, null, null);
 
         ActorDynamicData dynamicData = new ActorDynamicData();
 
-        List<KPI> kpis = new List<KPI>() { performance, ooe, odf, duration };
+        List<KPI> kpis = new List<KPI>() { performance, ooe, odf, temperature, duration };
         dynamicData.KPIs = kpis;
 
 
