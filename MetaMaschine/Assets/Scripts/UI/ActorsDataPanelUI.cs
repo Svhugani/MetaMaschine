@@ -40,6 +40,8 @@ public class ActorsDataPanelUI : AbstractCanvasPanel
         }
 
         agentName.text = "DATA: " + actor.ActorData.ActorName;
+
+        UpdateKPIs(actor);
         actor.OnActorDynamicDataSet += UpdateKPIs;
     }
 
@@ -55,6 +57,7 @@ public class ActorsDataPanelUI : AbstractCanvasPanel
 
     public void UpdateKPIs(IActor actor)
     {
+        if (actor.ActorDynamicData == null || actor.ActorDynamicData.KPIs == null) return;
         List<KPI> kpis = actor.ActorDynamicData.KPIs;
 
         for (int i = 0; i < kpis.Count; i++) 

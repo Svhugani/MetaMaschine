@@ -51,11 +51,12 @@ public class DataSimulator : MonoBehaviour
         KPI ooe = new KPI("OOE", curveB.Evaluate(normTime), "", 2, 0, 1);
         KPI odf = new KPI("ODF", 0.5f + 0.5f * curveB.Evaluate(1 - normTime), "", 2, 0, 1);
         KPI temperature = new KPI("TEMPERATURE", 100 * (0.2f + 0.5f * curveC.Evaluate(1 - normTime)), "°C", 0, 0, 100);
+        KPI kvp = new KPI("KVP", 100 * (0.4f + 0.6f * curveC.Evaluate(normTime)), "%", 0, 0, 100);
         KPI duration = new KPI("DURATION", 20 * normTime, "h", 0, null, null);
 
         ActorDynamicData dynamicData = new ActorDynamicData();
 
-        List<KPI> kpis = new List<KPI>() { performance, ooe, odf, temperature, duration };
+        List<KPI> kpis = new List<KPI>() { performance, ooe, odf, temperature, kvp, duration };
         dynamicData.KPIs = kpis;
 
 
@@ -64,28 +65,29 @@ public class DataSimulator : MonoBehaviour
         {
 
             float r = Random.Range(0.0f, 1.0f);
-            if (r < 0.8f) continue;
-
-            r = Random.Range(0.0f, 1.0f);
-
-            if (r < .08f)
+            if (r < 0.3f)
             {
-                dynamicData.ActorStatus = GetErrorStatus();
-            }
+                r = Random.Range(0.0f, 1.0f);
 
-            else if (r < .20f)
-            {
-                dynamicData.ActorStatus = GetWarnStatus();
-            }
+                if (r < .08f)
+                {
+                    dynamicData.ActorStatus = GetErrorStatus();
+                }
 
-            else if (r < .25f)
-            {
-                dynamicData.ActorStatus = GetMaintenanceStatus();
-            }
+                else if (r < .20f)
+                {
+                    dynamicData.ActorStatus = GetWarnStatus();
+                }
 
-            else
-            {
-                dynamicData.ActorStatus = GetNormalStatus();
+                else if (r < .25f)
+                {
+                    dynamicData.ActorStatus = GetMaintenanceStatus();
+                }
+
+                else
+                {
+                    dynamicData.ActorStatus = GetNormalStatus();
+                }
             }
 
             a.TriggerOnDynamicDatSet(dynamicData);

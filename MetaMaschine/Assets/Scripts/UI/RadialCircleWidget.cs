@@ -85,11 +85,11 @@ public class RadialCirclesWidget : MonoBehaviour
                 circles[i].SetActive(true);
                 circles[i].GetComponent<Image>().color = Color.Lerp(colorA, colorB, (float)i / (totalCircles - 1));
                 circles[i].GetComponent<Image>().color = new Color(circles[i].GetComponent<Image>().color.r, circles[i].GetComponent<Image>().color.g, circles[i].GetComponent<Image>().color.b, 0);
-                tweens[i] = circles[i].GetComponent<Image>().DOFade(1, 0.5f).SetDelay(i * 0.05f); // Fade in with delay
+                tweens[i] = circles[i].GetComponent<Image>().DOFade(1, 0.25f).SetDelay(i * 0.05f); // Fade in with delay
             }
             else
             {
-                tweens[i] = circles[i].GetComponent<Image>().DOFade(0, 0.5f).SetDelay(i * 0.05f).OnComplete(() => circles[i].SetActive(false)); // Fade out with delay and deactivate
+                tweens[i] = circles[i].GetComponent<Image>().DOFade(0, 0.25f).SetDelay(i * 0.05f).OnComplete(() => circles[i].SetActive(false)); // Fade out with delay and deactivate
             }
         }
 
