@@ -1,9 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 public class RadialCirclesWidget : MonoBehaviour
 {
+    public TextMeshProUGUI widgetName;
+    public TextMeshProUGUI widgetValue;
+    public TextMeshProUGUI widgetMin;
+    public TextMeshProUGUI widgetMax;
+
     public RectTransform rectTransform;
     public GameObject circlePrefab; // Prefab with an Image component for the circle
     public Color colorA = Color.red; // Starting color
@@ -13,7 +19,7 @@ public class RadialCirclesWidget : MonoBehaviour
     private GameObject[] circles;
     private Tween[] tweens;
 
-    void Start()
+    void Awake()
     {
         if (!rectTransform)
         {
@@ -45,10 +51,24 @@ public class RadialCirclesWidget : MonoBehaviour
         }
     }
 
-    public void SetValue(float value)
+    public void SetValue(string name, float rawValue, float? minValue, float? maxValue, int decimals, string unit)
     {
+        float value;
+        float minValueParse = 0;
+        float maxValueParse = 0;
         // Clamp value between 0 and 1
-        value = Mathf.Clamp01(value);
+        if (minValue == null || maxValue == null)
+        {
+            value = 0;
+        }
+        else
+        {
+            minValueParse = (float)minValue;
+            maxValueParse = (float)maxValue;
+            value = Mathf.Clamp01(Mathf.InverseLerp(minValueParse, maxValueParse, rawValue));
+
+
+        }
 
         // Calculate number of circles to display
         int circlesToDisplay = Mathf.FloorToInt(totalCircles * value);
@@ -72,23 +92,21 @@ public class RadialCirclesWidget : MonoBehaviour
                 tweens[i] = circles[i].GetComponent<Image>().DOFade(0, 0.5f).SetDelay(i * 0.05f).OnComplete(() => circles[i].SetActive(false)); // Fade out with delay and deactivate
             }
         }
-    }
 
-    private void Update()
-    {
-        if (Input.GetKey(KeyCode.A))
-        {
-            SetValue(0.3f);
-        }
+        decimals = Mathf.Max(0, decimals);
 
-        if (Input.GetKey(KeyCode.S))
-        {
-            SetValue(0.6f);
-        }
+        string formattedValue = rawValue.ToString($"F{decimals}");
+        formattedValue = $"{formattedValue} {unit}";
 
-        if (Input.GetKey(KeyCode.D))
-        {
-            SetValue(1f);
-        }
+        string formattedMin = minValueParse.ToString($"F{decimals}");
+        formattedMin = $"{formattedMin} {unit}";
+
+        string formattedMax = maxValueParse.ToString($"F{decimals}");
+        formattedMin = $"{formattedMin} {unit}";
+
+        widgetName.text = name;
+        widgetValue.text = formattedValue;
+        widgetMin.text = formattedMin;
+        widgetMax.text = formattedMax;
     }
 }

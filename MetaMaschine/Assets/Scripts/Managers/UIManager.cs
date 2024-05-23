@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class UIManager : MonoBehaviour, IUIManager
 {
-    [SerializeField] private ActorsFactoryPanelUI actorsFactoryPanelUI; 
+    [SerializeField] private ActorsFactoryPanelUI actorsFactoryPanelUI;
+    [SerializeField] private ActorsDataPanelUI actorsDataPanelUI;
+
+
+
     public void SetActorsFactoryVisibility(bool visibility)
     {
         actorsFactoryPanelUI.SetVisibility(visibility);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,8 @@ public class ActorManager : MonoBehaviour, IActorManager
 
     private IActor _selected;
     private IActor _hovered;
+
+    public event Action<IActor> OnSelectionChange;
 
     [Inject] public void Construct(IInputManager inputManger, IViewManager viewManager, IVisualManager visualManager, IUIManager uiManager)
     {
@@ -91,6 +94,7 @@ public class ActorManager : MonoBehaviour, IActorManager
             _selected = actor;
 
             actorMarker.Mark(_selected);
+            TriggerOnSelectionChange();
         }
     }
 
@@ -113,6 +117,7 @@ public class ActorManager : MonoBehaviour, IActorManager
             _selected.TriggerOnDefault();
             _selected = null;
             actorMarker.Unmark();
+            TriggerOnSelectionChange();
         }
     }
 
@@ -146,74 +151,6 @@ public class ActorManager : MonoBehaviour, IActorManager
         }
     }
 
-/*    public void SetWarningInfo(string actorID)
-    {
-        if(GetActor(actorID, out IActor actor))
-        {
-            SetWarningInfo(actor);
-        }
-    }
-
-    public void SetMaintenanceInfo(string actorID)
-    {
-        if (GetActor(actorID, out IActor actor))
-        {
-            SetMaintenanceInfo(actor);
-        }
-    }
-
-    public void SetErrorInfo(string actorID)
-    {
-        if (GetActor(actorID, out IActor actor))
-        {
-            SetErrorInfo(actor);
-        }
-    }*/
-
-/*    public void SetDefaultInfo(string actorID)
-    {
-        if (GetActor(actorID, out IActor actor))
-        {
-            SetDefaultInfo(actor);
-        }
-    }
-
-    public void SetWarningInfo(IActor actor)
-    {
-        actor.SetInfoVisibility(true);
-        actor.SetLabelValue("WARNING");
-        actor.SetIcon(_visualManager.GetWarningIcon());
-        actor.SetInfoPriority(InfoPriority.Medium);
-        actor.SetInfoColor(_visualManager.GetWarningColor());
-    }
-
-    public void SetMaintenanceInfo(IActor actor)
-    {
-        actor.SetInfoVisibility(true);
-        actor.SetLabelValue("MAINTENANCE");
-        actor.SetIcon(_visualManager.GetMaintenanceIcon());
-        actor.SetInfoPriority(InfoPriority.Medium);
-        actor.SetInfoColor(_visualManager.GetMaintenanceColor());
-    }
-
-    public void SetErrorInfo(IActor actor)
-    {
-        actor.SetInfoVisibility(true);
-        actor.SetLabelValue("ERROR");
-        actor.SetIcon(_visualManager.GetErrorIcon());
-        actor.SetInfoPriority(InfoPriority.High);
-        actor.SetInfoColor(_visualManager.GetErrorColor());
-    }
-
-    public void SetDefaultInfo(IActor actor)
-    {
-        actor.SetInfoVisibility(true);
-        actor.SetIconVisibility(false);
-        actor.SetLabelValue(actor.ActorData.ActorName);
-        actor.SetInfoPriority(InfoPriority.Low);
-        actor.SetInfoColor(_visualManager.GetDefaultColor());
-    }*/
-
     public bool GetActor(string actorID, out IActor actor)
     {
         actor = null;   
@@ -246,5 +183,10 @@ public class ActorManager : MonoBehaviour, IActorManager
     public int GetActorCount()
     {
         return Actors.Count;
+    }
+
+    public void TriggerOnSelectionChange()
+    {
+        OnSelectionChange?.Invoke(_selected);
     }
 }
