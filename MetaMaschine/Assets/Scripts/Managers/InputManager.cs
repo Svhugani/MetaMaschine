@@ -22,11 +22,13 @@ public class InputManager : MonoBehaviour, IInputManager
     public bool MPMHolded { get; private set; }
 
     private Vector3 _prevScreenPosition;
+    private float _previousPinchDistance;
 
     public event Action OnLPMClick;
     public event Action OnMPMClick;
     public event Action OnPointerMove;
     public event Action OnRPMClick;
+    public event Action OnScroll;
 
     private void Update()
     {
@@ -52,6 +54,10 @@ public class InputManager : MonoBehaviour, IInputManager
 
         PointerDelta = ScreenPosition - _prevScreenPosition;
         Scroll = Input.mouseScrollDelta;
+        if (Scroll != Vector2.zero)
+        {
+            TriggerOnScroll();
+        }
         _prevScreenPosition = ScreenPosition;
 
         // Handle mouse buttons
@@ -194,6 +200,27 @@ public class InputManager : MonoBehaviour, IInputManager
 
             PointerDelta = touch.deltaPosition;
         }
+
+        if (Input.touchCount == 2)
+        {
+            // Handle pinch to zoom
+            Touch touch1 = Input.GetTouch(0);
+            Touch touch2 = Input.GetTouch(1);
+
+            Vector2 touch1PrevPos = touch1.position - touch1.deltaPosition;
+            Vector2 touch2PrevPos = touch2.position - touch2.deltaPosition;
+
+            float prevMagnitude = (touch1PrevPos - touch2PrevPos).magnitude;
+            float currentMagnitude = (touch1.position - touch2.position).magnitude;
+
+            float difference = currentMagnitude - prevMagnitude;
+            Scroll = new Vector2(0, difference);
+
+            if (Scroll != Vector2.zero)
+            {
+                TriggerOnScroll();
+            }
+        }
     }
 
     private bool IsPointerOverUIElement()
@@ -226,5 +253,10 @@ public class InputManager : MonoBehaviour, IInputManager
     public void TriggerOnPointerMove()
     {
         OnPointerMove?.Invoke();
+    }
+
+    public void TriggerOnScroll()
+    {
+        OnScroll?.Invoke();
     }
 }

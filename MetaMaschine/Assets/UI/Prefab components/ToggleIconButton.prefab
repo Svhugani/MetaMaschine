@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8906987431257789513}
   - component: {fileID: 6823319350963782812}
   - component: {fileID: 8308687636098788958}
+  - component: {fileID: 3016446796241435850}
   m_Layer: 0
   m_Name: ToggleIconButton
   m_TagString: Untagged
@@ -60,7 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.12578613, g: 0.12578613, b: 0.12578613, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -98,9 +99,9 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}
-    m_HighlightedColor: {r: 0.19496846, g: 0.19496846, b: 0.19496846, a: 1}
-    m_PressedColor: {r: 0.2578616, g: 0.2578616, b: 0.2578616, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -119,6 +120,29 @@ MonoBehaviour:
   m_Interactable: 1
   m_TargetGraphic: {fileID: 6823319350963782812}
   m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &3016446796241435850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 230858902832756055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 193fb3d1a187a7b4c88cf4f76cebb2ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initStateOn: 0
+  icon: {fileID: 3178107096913827268}
+  button: {fileID: 8308687636098788958}
+  onColor: {r: 0.26100624, g: 0.7246886, b: 1, a: 1}
+  offColor: {r: 1, g: 1, b: 1, a: 1}
+  OnAction:
+    m_PersistentCalls:
+      m_Calls: []
+  OffAction:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &8023957499707257222

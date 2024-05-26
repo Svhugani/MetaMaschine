@@ -40,11 +40,11 @@ public class VisualManager : MonoBehaviour, IVisualManager
 
     private void Awake()
     {
-        _urpLitShader = Shader.Find("Universal Render Pipeline/Lit");
+        //_urpLitShader = Shader.Find("Universal Render Pipeline/Lit");
     }
     public void SetActorMaterialToDefault()
     {
-        defaultActorMaterial.shader = _urpLitShader;
+        defaultActorMaterial.shader = Shader.Find("Universal Render Pipeline/Lit");
     }
 
     public void SetActorMaterialToXRay()
